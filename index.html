@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gongura House – గుంటూరు</title>
+<style>
+:root {
+  --bg:#F3F1EA;
+  --panel:#fff;
+  --ink:#0E2A33;
+  --mute:#5B7178;
+  --acc:#E8A317;
+  --line:#D9DED6;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Arial,sans-serif;
+}
+header{
+  background:#0E2A33;
+  color:white;
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.logo{font-size:25px;color:#E8A317;font-weight:bold}
+nav{display:flex;gap:15px;flex-wrap:wrap}
+nav a{color:white;text-decoration:none}
+button{
+  background:#0E2A33;
+  color:white;
+  border:0;
+  border-radius:10px;
+  padding:11px 18px;
+  cursor:pointer;
+}
+button:hover{opacity:.85}
+.go{background:#E8A317;color:#0E2A33;font-weight:bold}
+section{
+  max-width:1100px;
+  margin:auto;
+  padding:35px 18px;
+}
+.page{display:none}
+.page.on{display:block}
+.hero{
+  display:grid;
+  grid-template-columns:1.3fr 1fr;
+  gap:25px;
+  align-items:center;
+}
+.hero h1{font-size:55px}
+.plate{
+  font-size:130px;
+  text-align:center;
+  background:#E8A317;
+  border-radius:50%;
+  padding:40px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:15px;
+}
+.card,.dish{
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  border:1px solid var(--line);
+}
+.dish .emoji{font-size:45px}
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+input,select{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin:5px 0 12px;
+}
+label{display:block}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+#drawer{
+  position:fixed;
+  right:0;top:0;
+  height:100%;
+  width:min(400px,100%);
+  background:white;
+  padding:20px;
+  overflow:auto;
+  box-shadow:0 0 20px #888;
+  display:none;
+  z-index:10;
+}
+#drawer.on{display:block}
+footer{
+  background:#0E2A33;
+  color:white;
+  padding:30px;
+  text-align:center;
+}
+@media(max-width:700px){
+  .hero{grid-template-columns:1fr}
+  .hero h1{font-size:40px}
+  nav{gap:10px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">గోంగూర హౌస్ 🍛</div>
+  <nav>
+    <a href="#home">హోమ్</a>
+    <a href="#menu">మెనూ</a>
+    <a href="#reserve">టేబుల్ బుకింగ్</a>
+    <a href="#party">పార్టీలు</a>
+    <a href="#track">ఆర్డర్ ట్రాక్</a>
+    <a href="#admin">అడ్మిన్</a>
+  </nav>
+  <button class="go" onclick="openCart()">కార్ట్ (<span id="count">0</span>)</button>
+</header>
+
+<section id="home" class="page">
+  <div class="hero">
+    <div>
+      <h1>గుంటూరులో రుచుల విందు!</h1>
+      <p>ఆంధ్రా ఘాటు రుచులతో తయారుచేసిన అద్భుతమైన వంటకాలు మీకోసం.</p>
+      <button class="go" onclick="location.hash='menu'">ఇప్పుడే ఆర్డర్ చేయండి</button>
+      <button onclick="location.hash='reserve'">టేబుల్ బుక్ చేయండి</button>
+    </div>
+    <div class="plate">🍛</div>
+  </div>
+  <h2>మా ప్రత్యేకతలు</h2>
+  <div class="grid">
+    <div class="card"><h3>🍗 ఆంధ్రా రుచులు</h3><p>సంప్రదాయ పద్ధతిలో తయారైన వంటకాలు.</p></div>
+    <div class="card"><h3>🚚 వేగవంతమైన డెలివరీ</h3><p>మీ ఇంటి వద్దకే వేడి వేడి ఆహారం.</p></div>
+    <div class="card"><h3>⭐ నాణ్యమైన ఆహారం</h3><p>తాజా పదార్థాలతో వంటకాలు.</p></div>
+  </div>
+  <h2>ఈ వారం ఆఫర్లు</h2>
+  <div class="grid">
+    <div class="card"><h3>లంచ్ కాంబో ₹199</h3><p>భోజనం, కూర మరియు మజ్జిగ.</p></div>
+    <div class="card"><h3>ఉచిత స్వీట్</h3><p>₹800 పైగా ఆర్డర్ చేస్తే స్వీట్ ఉచితం.</p></div>
+  </div>
+</section>
+
+<section id="menu" class="page">
+  <h1>మా మెనూ</h1>
+  <input id="search" placeholder="వంటకం పేరు వెతకండి..." oninput="showMenu()">
+  <div class="chips">
+    <button onclick="filterMenu('All')">అన్నీ</button>
+    <button onclick="filterMenu('Starters')">స్టార్టర్స్</button>
+    <button onclick="filterMenu('Mains')">ప్రధాన వంటకాలు</button>
+    <button onclick="filterMenu('Rice')">అన్నం</button>
+    <button onclick="filterMenu('Sweets')">స్వీట్లు</button>
+    <button onclick="filterMenu('Drinks')">పానీయాలు</button>
+  </div>
+  <div class="grid" id="menuGrid"></div>
+</section>
+
+<section id="reserve" class="page">
+  <h1>టేబుల్ బుకింగ్</h1>
+  <div class="card">
+    <form id="bookingForm">
+      <label>మీ పేరు<input id="rname" required></label>
+      <label>ఫోన్ నంబర్<input id="phone" type="tel" pattern="[0-9]{10}" required></label>
+      <label>తేదీ<input id="date" type="date" required></label>
+      <label>సమయం
+        <select id="time">
+          <option>12:30 PM</option>
+          <option>1:30 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+        </select>
+      </label>
+      <label>అతిథుల సంఖ్య
+        <select id="guests">
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>6</option><option>8</option>
+        </select>
+      </label>
+      <button class="go">బుకింగ్ నిర్ధారించండి</button>
+    </form>
+    <p id="bookingResult"></p>
+  </div>
+</section>
+
+<section id="party" class="page">
+  <h1>ప్రైవేట్ పార్టీలు</h1>
+  <div class="card">
+    <form id="partyForm">
+      <label>మీ పేరు<input id="pname" required></label>
+      <label>ఫోన్ నంబర్<input id="pphone" type="tel" pattern="[0-9]{10}" required></label>
+      <label>కార్యక్రమం
+        <select id="event">
+          <option>పుట్టినరోజు</option>
+          <option>కుటుంబ వేడుక</option>
+          <option>ఆఫీస్ లంచ్</option>
+          <option>వార్షికోత్సవం</option>
+        </select>
+      </label>
+      <label>తేదీ<input id="pdate" type="date" required></label>
+      <label>అతిథుల సంఖ్య<input id="pguests" type="number" min="10" max="80" value="20"></label>
+      <label>ప్యాకేజీ
+        <select id="package">
+          <option value="599">సిల్వర్ - ₹599</option>
+          <option value="899">గోల్డ్ - ₹899</option>
+          <option value="1299">ప్లాటినం - ₹1299</option>
+        </select>
+      </label>
+      <p id="estimate"></p>
+      <button class="go">వివరాలు పంపండి</button>
+    </form>
+    <p id="partyResult"></p>
+  </div>
+</section>
+
+<section id="track" class="page">
+  <h1>మీ ఆర్డర్ ట్రాక్ చేయండి</h1>
+  <div class="card" id="tracking">ఇంకా ఆర్డర్ లేదు.</div>
+</section>
+
+<section id="admin" class="page">
+  <h1>అడ్మిన్ ప్యానెల్</h1>
+  <div class="card" id="login">
+    <h3>సిబ్బంది లాగిన్</h3>
+    <form id="loginForm">
+      <label>స్టాఫ్ ఐడీ<input id="staff" required></label>
+      <label>పిన్<input id="pin" type="password" required></label>
+      <button class="go">లాగిన్</button>
+    </form>
+    <p id="loginError"></p>
+    <small>డెమో: manager / 1234 లేదా chef / 5678</small>
+  </div>
+  <div id="adminPanel" style="display:none">
+    <button onclick="logout()">లాగౌట్</button>
+    <h2>ఆర్డర్లు</h2>
+    <div id="adminOrders"></div>
+    <h2>బుకింగ్‌లు</h2>
+    <div id="adminBookings"></div>
+  </div>
+</section>
+
+<aside id="drawer"></aside>
+
+<footer>
+  <h2>గోంగూర హౌస్</h2>
+  <p>అరండల్‌పేట, గుంటూరు</p>
+  <p>ప్రతిరోజూ మధ్యాహ్నం 12 నుండి రాత్రి 11 వరకు</p>
+  <p>ఫోన్: +91 90000 00000</p>
+</footer>
+
+<script>
+const menu=[
+ {n:'గోంగూర చికెన్',p:320,c:'Mains',e:'🍗'},
+ {n:'గుంటూరు మిర్చి రొయ్యలు',p:420,c:'Starters',e:'🦐'},
+ {n:'చిల్లీ చికెన్ 65',p:260,c:'Starters',e:'🌶️'},
+ {n:'పనీర్ టిక్కా',p:280,c:'Starters',e:'🧀'},
+ {n:'హైదరాబాదీ దమ్ బిర్యానీ',p:360,c:'Rice',e:'🍛'},
+ {n:'వెజ్ పులావ్',p:220,c:'Rice',e:'🍚'},
+ {n:'నెయ్యి పొడి దోశ',p:140,c:'Mains',e:'🥞'},
+ {n:'పప్పు అవకాయ భోజనం',p:200,c:'Mains',e:'🍲'},
+ {n:'డబుల్ కా మీఠా',p:150,c:'Sweets',e:'🍮'},
+ {n:'పూతరేకులు',p:120,c:'Sweets',e:'🍬'},
+ {n:'ఫిల్టర్ కాఫీ',p:70,c:'Drinks',e:'☕'},
+ {n:'మజ్జిగ',p:60,c:'Drinks',e:'🥛'}
+];
+
+let cart={},orders=[],bookings=[],category='All',mine=null,staff=null;
+
+function money(n){return '₹'+n.toLocaleString('en-IN')}
+
+function filterMenu(c){
+ category=c;
+ showMenu();
+}
+
+function showMenu(){
+ const q=document.getElementById('search').value.toLowerCase();
+ document.getElementById('menuGrid').innerHTML=menu
+ .map((m,i)=>({m,i}))
+ .filter(x=>(category==='All'||x.m.c===category)&&x.m.n.toLowerCase().includes(q))
+ .map(({m,i})=>`
+ <div class="dish">
+ <div class="emoji">${m.e}</div>
+ <h3>${m.n}</h3>
+ <div class="row">
+ <b>${money(m.p)}</b>
+ <button class="go" onclick="addCart(${i})">జోడించు</button>
+ </div>
+ </div>`).join('');
+}
+
+function addCart(i){
+ cart[i]=(cart[i]||0)+1;
+ updateCart();
+}
+
+function updateCart(){
+ document.getElementById('count').textContent=
+ Object.values(cart).reduce((a,b)=>a+b,0);
+}
+
+function openCart(){
+ const keys=Object.keys(cart);
+ let total=keys.reduce((a,i)=>a+menu[i].p*cart[i],0);
+ let html=`<div class="row"><h2>మీ కార్ట్</h2>
+ <button onclick="closeCart()">మూసివేయి</button></div>`;
+
+ if(!keys.length) html+='<p>మీ కార్ట్ ఖాళీగా ఉంది.</p>';
+ else{
+ keys.forEach(i=>{
+ html+=`<div class="row">
+ <span>${menu[i].n}<br>${money(menu[i].p)}</span>
+ <span>
+ <button onclick="changeQty(${i},-1)">−</button>
+ ${cart[i]}
+ <button onclick="changeQty(${i},1)">+</button>
+ </span></div>`;
+ });
+ html+=`<hr><h3>మొత్తం: ${money(total)}</h3>
+ <form id="orderForm">
+ <label>పేరు<input id="cname" required></label>
+ <label>ఫోన్<input id="cphone" type="tel" pattern="[0-9]{10}" required></label>
+ <label>చిరునామా<input id="address" required></label>
+ <label>చెల్లింపు
+ <select id="payment"><option>UPI</option><option>కార్డ్</option><option>క్యాష్ ఆన్ డెలివరీ</option></select>
+ </label>
+ <button class="go">ఆర్డర్ చేయండి</button>
+ </form>`;
+ }
+ document.getElementById('drawer').innerHTML=html;
+ document.getElementById('drawer').classList.add('on');
+ const form=document.getElementById('orderForm');
+ if(form)form.onsubmit=placeOrder;
+}
+
+function closeCart(){
+ document.getElementById('drawer').classList.remove('on');
+}
+
+function changeQty(i,n){
+ cart[i]+=n;
+ if(cart[i]<=0)delete cart[i];
+ openCart();
+ updateCart();
+}
+
+function placeOrder(e){
+ e.preventDefault();
+ const total=Object.keys(cart).reduce((a,i)=>a+menu[i].p*cart[i],0);
+ const order={
+ id:1000+orders.length+1,
+ name:document.getElementById('cname').value,
+ phone:document.getElementById('cphone').value,
+ address:document.getElementById('address').value,
+ payment:document.getElementById('payment').value,
+ items:Object.keys(cart).map(i=>menu[i].n+' × '+cart[i]),
+ amount:Math.round(total*1.05),
+ status:'ఆర్డర్ అందింది'
+ };
+ orders.push(order);
+ mine=order.id;
+ cart={};
+ updateCart();
+ closeCart();
+ showTracking();
+ location.hash='track';
+}
+
+function showTracking(){
+ const o=orders.find(x=>x.id===mine);
+ if(!o)return;
+ document.getElementById('tracking').innerHTML=`
+ <h2>ఆర్డర్ #${o.id}</h2>
+ <h3>${o.status}</h3>
+ <p>${o.items.join(', ')}</p>
+ <p>చిరునామా: ${o.address}</p>
+ <p>చెల్లింపు: ${o.payment}</p>
+ <h3>మొత్తం: ${money(o.amount)}</h3>`;
+}
+
+document.getElementById('bookingForm').onsubmit=e=>{
+ e.preventDefault();
+ const b={
+ name:document.getElementById('rname').value,
+ phone:document.getElementById('phone').value,
+ date:document.getElementById('date').value,
+ time:document.getElementById('time').value,
+ guests:document.getElementById('guests').value
+ };
+ bookings.push(b);
+ document.getElementById('bookingResult').textContent=
+ 'మీ బుకింగ్ విజయవంతంగా నమోదైంది!';
+ e.target.reset();
+};
+
+function calculateParty(){
+ const guests=+document.getElementById('pguests').value;
+ const price=+document.getElementById('package').value;
+ const total=Math.round(guests*price*1.05);
+ document.getElementById('estimate').textContent=
+ 'అంచనా మొత్తం: '+money(total);
+ return total;
+}
+
+document.getElementById('partyForm').oninput=calculateParty;
+calculateParty();
+
+document.getElementById('partyForm').onsubmit=e=>{
+ e.preventDefault();
+ const p={
+ name:document.getElementById('pname').value,
+ phone:document.getElementById('pphone').value,
+ event:document.getElementById('event').value,
+ date:document.getElementById('pdate').value,
+ guests:document.getElementById('pguests').value,
+ amount:calculateParty()
+ };
+ document.getElementById('partyResult').textContent=
+ 'మీ పార్టీ వివరాలు విజయవంతంగా నమోదయ్యాయి!';
+ e.target.reset();
+ calculateParty();
+};
+
+document.getElementById('loginForm').onsubmit=e=>{
+ e.preventDefault();
+ const id=document.getElementById('staff').value;
+ const pin=document.getElementById('pin').value;
+ if((id==='manager'&&pin==='1234')||(id==='chef'&&pin==='5678')){
+ staff=id;
+ document.getElementById('login').style.display='none';
+ document.getElementById('adminPanel').style.display='block';
+ drawAdmin();
+ }else{
+ document.getElementById('loginError').textContent='తప్పు ఐడీ లేదా పిన్';
+ }
+};
+
+function drawAdmin(){
+ document.getElementById('adminOrders').innerHTML=
+ orders.map(o=>`
+ <div class="card">
+ <b>ఆర్డర్ #${o.id} - ${o.name}</b>
+ <p>${o.items.join(', ')}</p>
+ <p>${money(o.amount)}</p>
+ <button onclick="advanceOrder(${o.id})">తదుపరి స్థితి</button>
+ </div>`).join('')||'ఆర్డర్లు లేవు';
+
+ document.getElementById('adminBookings').innerHTML=
+ bookings.map(b=>`
+ <div class="card">
+ <b>${b.name}</b>
+ <p>${b.date} - ${b.time}</p>
+ <p>అతిథులు: ${b.guests}</p>
+ </div>`).join('')||'బుకింగ్‌లు లేవు';
+}
+
+function advanceOrder(id){
+ const o=orders.find(x=>x.id===id);
+ const states=['ఆర్డర్ అందింది','వంట జరుగుతోంది','డెలివరీకి బయలుదేరింది','డెలివరీ పూర్తయింది'];
+ const index=states.indexOf(o.status);
+ o.status=states[Math.min(index+1,3)];
+ drawAdmin();
+ if(mine===id)showTracking();
+}
+
+function logout(){
+ staff=null;
+ document.getElementById('login').style.display='block';
+ document.getElementById('adminPanel').style.display='none';
+}
+
+function route(){
+ const id=(location.hash||'#home').slice(1);
+ const valid=['home','menu','reserve','party','track','admin'];
+ const page=valid.includes(id)?id:'home';
+ document.querySelectorAll('.page').forEach(s=>{
+ s.classList.toggle('on',s.id===page);
+ });
+ if(page==='track')showTracking();
+ if(page==='admin'&&staff)drawAdmin();
+ window.scrollTo(0,0);
+}
+
+window.addEventListener('hashchange',route);
+document.getElementById('date').min=new Date().toISOString().slice(0,10);
+document.getElementById('pdate').min=new Date().toISOString().slice(0,10);
+
+showMenu();
+updateCart();
+route();
+</script>
+</body>
+</html>
